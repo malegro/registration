@@ -1,7 +1,7 @@
-function image = seg_blockface_kmeans(img, wp, niter, backmask)
+function image = seg_blockface_kmeans(img, wp, niter)
 
 %img = rgb2gray(img);
-img = imresize(img,0.15);
+%img = imresize(img,0.15);
 R = img(:,:,1);
 G = img(:,:,2);
 B = img(:,:,3);
@@ -9,54 +9,50 @@ B = img(:,:,3);
 %img = weak_wb(img,wp);
 yiq = rgb2ntsc(img);
 Y = yiq(:,:,1);
-I = gscale(yiq(:,:,2));
-Q = gscale(yiq(:,:,3));
+I = yiq(:,:,2);
+Q = yiq(:,:,3);
 
 [rows cols] = size(Y);
 img_center = [round(rows/2) round(cols/2)];
 
 %[H S V] = rgb2hsv(img);
 
-if ~isempty(backmask)
-    
-    fore_idx = find(backmask == 1);
-    II = I(fore_idx);
-    QQ = Q(fore_idx);
-    %features = cat(2,double(II),double(QQ));
-    features = double(QQ);
-else
-    features = cat(2,double(I(:)),double(Q(:)));
-end
-
+features = double(cat(2,I(:),Q(:)));
 features = rescale2(features,0,1);
-[idx,ctrs] = kmeans(features,2,'Distance','cityblock','Replicates',5);
+%[idx,ctrs] = kmeans(features,2,'Distance','cityblock','Replicates',5);
+%[idx,ctrs] = kmeans(features,2,'Distance','cityblock','Replicates',2);
 %[idx,ctrs] = kmeans(features,2);
-[m fore] = min(ctrs(:,1));
+%clusters = zeros(size(Y));
+% clusters(idx == 1) = 1;
+% clusters(idx == 2) = 0;
+% [m fore] = max(ctrs(:,1));
+% clusters(idx == fore) = 1;
+% clusters(idx ~= fore) = 0;
+obj = gmdistribution.fit(features,2,'Options',options);
+idx = cluster(obj,features);
+II = features(:,1);
+QQ = features(:,2);
 
-if ~isempty(backmask)
-    npix = length(fore_idx);    
-    clusters = zeros(size(Y));
-    for p = 1:npix
-        clusters(fore_idx(p)) = idx(p);      
-    end
-    clusters(clusters ~= fore) = 0;
-    clusters(clusters == fore) = 1;
+tmp_c1 = II(idx == 1);
+tmp_c2 = II(idx == 2);
+if mean(tmp_c1) > mean(tmp_c2)
+    fore = 1;
 else
-    clusters = zeros(size(Y));
-    clusters(idx == fore) = 1;
-    clusters(idx ~= fore) = 0;
+    fore = 2;
 end
+clusters = zeros(size(Q));
+clusters(idx == fore) = 1;
+
 
 [labels mainL] = findMainObj(clusters,img_center);
 mask = zeros(size(labels));
 mask(labels == mainL) = 1;
 
 
-%img = weak_wb(img,wp);
+img = weak_wb(img,wp);
 new_mask = imfill(mask,'holes');
 %B = anisodiff2D(B2,30,1/7,10,1);
 [gmag gdir] = imgradient(img(:,:,3));
-
 %gmag(gmag < 30) = 0;
 mask = region_seg(gscale(gmag),new_mask,niter,0.4,1);
 %[mask] = sfm_local_chanvese(gscale(gmag),new_mask,1000,0.2,10);
@@ -70,12 +66,6 @@ image = cat(3,R2,G2,B2);
 
 
 end
-
-
-
-
-
-
 
 
 
@@ -134,7 +124,6 @@ for l = 1:nL
        
     %get the largest object w/ min distance from center
     if(dist < minDist && sizeObj > 2000)
-    %if(dist < minDist)
             minDist = dist;
             mainL = l;
     end 
