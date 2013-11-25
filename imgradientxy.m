@@ -63,4 +63,77 @@ function [Gx, Gy] = imgradientxy(varargin)
 %   See also EDGE, FSPECIAL, IMGRADIENT.
 
 % Copyright 2012 The MathWorks, Inc. 
-% $Revision: 1.1.6.2.2.1 $ $Date: 2012/06/27 13:58:09 $
+% $Revision: 1.1.6.3 $ $Date: 2012/07/01 03:11:36 $
+
+narginchk(1,2);
+
+[I, method] = parse_inputs(varargin{:});
+
+if ~isfloat(I)
+    I = double(I);
+end
+
+switch method
+    case 'sobel'
+        h = -fspecial('sobel'); % Align mask correctly along the x- and y- axes
+        Gx = imfilter(I,h','replicate');
+        if nargout > 1
+            Gy = imfilter(I,h,'replicate');
+        end
+        
+    case 'prewitt'
+        h = -fspecial('prewitt'); % Align mask correctly along the x- and y- axes
+        Gx = imfilter(I,h','replicate');
+        if nargout > 1
+            Gy = imfilter(I,h,'replicate');
+        end        
+        
+    case 'centraldifference' 
+        if isrow(I)            
+            Gx = gradient(I);
+            if nargout > 1
+                Gy = zeros(size(I),class(I));
+            end            
+        elseif iscolumn(I)            
+            Gx = zeros(size(I),class(I));
+            if nargout > 1
+                Gy = gradient(I);
+            end                
+        else            
+            [Gx, Gy] = gradient(I);
+        end
+   
+    case 'intermediatedifference' 
+        Gx = zeros(size(I),class(I));
+        if (size(I,2) > 1)        
+            Gx(:,1:end-1) = I(:,2:end) - I(:,1:end-1);
+        end
+            
+        if nargout > 1
+            Gy = zeros(size(I),class(I));
+            if (size(I,1) > 1)
+                Gy(1:end-1,:) = I(2:end,:) - I(1:end-1,:);
+            end
+        end
+        
+end
+
+end
+%======================================================================
+function [I, method] = parse_inputs(varargin)
+
+I = varargin{1};
+
+validateattributes(I,{'numeric','logical'},{'2d','nonsparse','real'}, ...
+                   mfilename,'I',1);
+
+method = 'sobel'; % Default method
+if (nargin > 1)
+    methodstrings = {'sobel','prewitt','centraldifference', ...
+        'intermediatedifference'};
+    method = validatestring(varargin{2}, methodstrings, ...
+        mfilename, 'Method', 2);
+end
+
+end
+%----------------------------------------------------------------------
