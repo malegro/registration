@@ -100,11 +100,7 @@ mask = clusters;
 % mask = zeros(size(labels));
 % mask(labels == mainL) = 1;
 
-%img = weak_wb(img,wp);
-%new_mask = imfill(mask,'holes');
 mask = imfill(mask,'holes');
-%B = anisodiff2D(B2,30,1/7,10,1);
-%gmag(gmag < 30) = 0;
 
 if ~isempty(niter) && niter > 0    
     if hull == 1
