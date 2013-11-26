@@ -95,10 +95,10 @@ end
 se = strel('disk', 8);
 clusters = imopen(clusters,se);
 clusters = imclose(clusters,se);
-
-[labels mainL] = findMainObj(clusters,img_center);
-mask = zeros(size(labels));
-mask(labels == mainL) = 1;
+mask = clusters;
+% [labels mainL] = findMainObj(clusters,img_center);
+% mask = zeros(size(labels));
+% mask(labels == mainL) = 1;
 
 %img = weak_wb(img,wp);
 %new_mask = imfill(mask,'holes');
@@ -118,7 +118,7 @@ if ~isempty(niter) && niter > 0
 %[mask] = sfm_local_chanvese(gscale(gmag),new_mask,1000,0.2,10);
 end
 
-%maks image
+%mask image
 R2 = img_bck(:,:,1); G2 = img_bck(:,:,2); B2 = img_bck(:,:,3);
 R2(mask == 0) = 0;
 G2(mask == 0) = 0;
@@ -131,6 +131,11 @@ I = yiq(:,:,2);
 I2 = gscale(I);
 H = imhist(I2);
 H(H == max(H)) = 0; %remove backgroung effect from histogram
+idx_tmp =  find(H == max(H));
+
+sigma0 = idx_tmp(1);
+mu0 = 100;
+
 x = 1: length(H);
 [sigma, mu, norm_H] = gaussfit(x,H); %fit a gaussian to the histogram
 
@@ -138,13 +143,15 @@ xp = 1:256;
 yp = 1/(sqrt(2*pi)* sigma ) * exp( - (xp-mu).^2 / (2*sigma^2));
 plot( x, norm_H, 'o', xp, yp, '-' );
 
-thresh = mu + 3*sigma;
-mask = ones(size(I2));
-mask(I2 >= ceil(thresh)) = 0;
+%thresh0 = mu - 3*sigma;
+thresh1 = mu + 3*sigma;
+%mask = ones(size(I2));
+%mask(I2 <= floor(thresh0)) = 0;
+mask(I2 >= ceil(thresh1)) = 0;
 
 
 %remask image
-R2 = img_bck(:,:,1); G2 = img_bck(:,:,2); B2 = img_bck(:,:,3);
+R2 = image(:,:,1); G2 = image(:,:,2); B2 = image(:,:,3);
 R2(mask == 0) = 0;
 G2(mask == 0) = 0;
 B2(mask == 0) = 0;

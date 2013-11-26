@@ -103,7 +103,7 @@ for i=1:Nmax
         sigma = abs( sigma );
         fprintf( 'Instability detected! Rerun with initial values sigma0 and mu0! \n\r' );
         fprintf( 'Check if your data is properly scaled! p.d.f should approx. sum up to \n\r' );
-        exit;
+        return;
     end
 end
 
