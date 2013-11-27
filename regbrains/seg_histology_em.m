@@ -126,14 +126,13 @@ yiq = rgb2ntsc(image);
 I = yiq(:,:,2);
 I2 = gscale(I);
 H = imhist(I2);
-H(H == max(H)) = 0; %remove backgroung effect from histogram
-idx_tmp =  find(H == max(H));
-
-sigma0 = idx_tmp(1);
-mu0 = 100;
+level = graythresh(I2);
+thresh = 255*level;
+H2 = H;
+H2(round(thresh):end) = 0;
 
 x = 1: length(H);
-[sigma, mu, norm_H] = gaussfit(x,H); %fit a gaussian to the histogram
+[sigma, mu, norm_H] = gaussfit(x,H2); %fit a gaussian to the histogram
 
 xp = 1:256;
 yp = 1/(sqrt(2*pi)* sigma ) * exp( - (xp-mu).^2 / (2*sigma^2));

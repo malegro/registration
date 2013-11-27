@@ -74,11 +74,9 @@ sigma = 1/(sqrt(2*pi)*ymax);
 
 if( nargin == 3 )
     mu = mu0;
-    sigma = 1/(sqrt(2*pi)*mu); 
 end
 
 if( nargin == 4 )
-    mu = mu0;
     sigma = sigma0;
 end
 
