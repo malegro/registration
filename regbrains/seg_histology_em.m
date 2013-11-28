@@ -108,9 +108,17 @@ if ~isempty(niter) && niter > 0
         hull = bwconvhull(mask2);
         mask = double(hull);
     end
-    [gmag gdir] = imgradient(img(:,:,3));
-    mask = region_seg(gscale(gmag),mask,niter,0.4,0);
-    mask = imfill(mask,'holes');    
+    
+    mask_bkp = mask;
+    
+    try
+        [gmag gdir] = imgradient(img(:,:,3));
+        mask = region_seg(gscale(gmag),mask,niter,0.4,0);
+        mask = imfill(mask,'holes');  
+    catch
+        fprintf('Error running snakes segmentation.\n');
+        mask = mask_bkp;
+    end
 %[mask] = sfm_local_chanvese(gscale(gmag),new_mask,1000,0.2,10);
 end
 
@@ -128,9 +136,13 @@ I2 = gscale(I);
 H = imhist(I2);
 level = graythresh(I2);
 thresh = 255*level;
+
+if thresh < 1
+    thresh = 127;
+end
+
 H2 = H;
 H2(round(thresh):end) = 0;
-
 x = 1: length(H);
 [sigma, mu, norm_H] = gaussfit(x,H2); %fit a gaussian to the histogram
 

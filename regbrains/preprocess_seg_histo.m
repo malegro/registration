@@ -30,7 +30,7 @@ for f=1:nFiles
     
     %do segmentation
     %img_seg = seg_histology(img);
-    img_seg = seg_histology_em(img,wp,0,0,1,[],[],[]);
+    img_seg = seg_histology_em(img,wp,1,100,1,[],[],[]);
 %     if size(img,3) > 1
 %         img = rgb2gray(img);
 %     end      
