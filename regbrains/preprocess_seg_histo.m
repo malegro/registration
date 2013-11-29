@@ -1,4 +1,4 @@
-function preprocess_seg_histo(directory,wp, samples)
+function preprocess_seg_histo(directory,wp, m_sigma, samples)
 
 %
 % Segments histology slices from the backgroung plate.
@@ -37,7 +37,7 @@ for f=1:nFiles
     
     %do segmentation
     %img_seg = seg_histology(img);
-    img_seg = seg_histology_em(img,wp,1,100,1,[],[],init_obj);
+    img_seg = seg_histology_em(img,wp,1,100,1,[],[],init_obj,m_sigma);
 %     if size(img,3) > 1
 %         img = rgb2gray(img);
 %     end      

@@ -1,4 +1,4 @@
-function image = seg_histology_em(img, wp, hull, niter, rback, mupT, mupB, init_obj)
+function image = seg_histology_em(img, wp, hull, niter, rback, mupT, mupB, init_obj, m_sigma)
 
 % Segments block images.
 %
@@ -11,6 +11,9 @@ function image = seg_histology_em(img, wp, hull, niter, rback, mupT, mupB, init_
 %        one point per row ([rows cols])
 % MUPB : list of points for background (optional)        
 %       one point per row ([rows cols])
+% INIT_OBJ : 
+% M_SIGMA: 
+%
 
 wsize = 13;
 
@@ -134,6 +137,10 @@ yiq = rgb2ntsc(image);
 I = yiq(:,:,2);
 I2 = gscale(I);
 H = imhist(I2);
+
+[max_H, idx_H] = max(H);
+H(idx_H) = 0;
+
 level = graythresh(I2);
 thresh = 255*level;
 
@@ -151,10 +158,10 @@ yp = 1/(sqrt(2*pi)* sigma ) * exp( - (xp-mu).^2 / (2*sigma^2));
 plot( x, norm_H, 'o', xp, yp, '-' );
 
 %thresh0 = mu - 3*sigma;
-thresh1 = mu + 3*sigma;
+thresh1 = mu + m_sigma * sigma;
 %mask = ones(size(I2));
 %mask(I2 <= floor(thresh0)) = 0;
-mask(I2 >= ceil(thresh1)) = 0;
+mask(I2 >= round(thresh1)) = 0;
 
 
 %remask image
