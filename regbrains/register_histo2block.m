@@ -82,6 +82,8 @@ for f = 1:nFiles
         %command = sprintf('mri_robust_register --mov %s --dst %s --lta %s --mapmov %s --iscale --satit',histo_img,bf_img,lta_name,result_img1);
         
         command = sprintf('mri_robust_register --mov %s --dst %s --cost ROBENT --radius 7 --satit --iscale --lta %s --mapmov %s  --affine --minsize 130',histo_img,bf_img,lta_name,result_img1);
+        
+        %mri_robust_register --mov ../../histology/seg/mgz/220.mgz --dst ../../220.mgz --cost ROBENT --satit --iscale --lta ../../220.tif.lta --mapmov ../../mrr_220.mgz  --affine
 
         fprintf('Running mri_robust_register...\n');
 
