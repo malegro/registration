@@ -79,10 +79,12 @@ for f = 1:nFiles
         result_img1 = strcat(histo_reg_dir,'mrr_',nii_name);
         lta_name = strcat(histo_reg_dir,files(f).name,'.lta');
 
-        %command = sprintf('mri_robust_register --mov %s --dst %s --lta %s --mapmov %s --iscale --satit',histo_img,bf_img,lta_name,result_img1);        
-        %command = sprintf('mri_robust_register --mov %s --dst %s --cost ROBENT --radius 7 --satit --iscale --lta %s --mapmov %s  --affine --minsize 130',histo_img,bf_img,lta_name,result_img1);
-        command = sprintf('mri_robust_register --mov %s --dst %s --cost ROBENT --satit --iscale --lta %s --mapmov %s --affine',histo_img,bf_img,lta_name,result_img1);
+        %command = sprintf('mri_robust_register --mov %s --dst %s --lta %s --mapmov %s --iscale --satit',histo_img,bf_img,lta_name,result_img1);
         
+        command = sprintf('mri_robust_register --mov %s --dst %s --cost ROBENT --radius 7 --satit --iscale --lta %s --mapmov %s  --affine --minsize 130',histo_img,bf_img,lta_name,result_img1);
+        
+        %mri_robust_register --mov %s --dst ../. --cost ROBENT --satit --iscale --lta ../../220.tif.lta --mapmov ../../mrr_220.mgz  --affine
+
         fprintf('Running mri_robust_register...\n');
 
         [status, result] = system(command);
