@@ -5,14 +5,15 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 
 if [[ ${#1} -eq 0 ]] ; then
 echo usage is 
-echo $0 movable.tif reference.tif output.nii.gz 
+echo $0 movable.tif reference.tif output.nii.gz outputprefix 
 exit
 fi
 
 mov=$1
 ref=$2
 out=$3
-outp=${out%%.*}
+#outp=${out%%.*}
+outp=$4
 
 echo comando:
 echo $0 $mov $ref $outp output prefix: $outp
