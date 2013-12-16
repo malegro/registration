@@ -59,11 +59,13 @@ else %segmentation refinement
            new_name = changeExt(name,'tif'); %avoid lossy compression
            name = strcat(block_dir,name);           
            new_name = strcat(seg_dir,new_name);
+           rback = 1;
        else
            name = strcat(prefix,int2str(todo(f)),'.tif');
            fprintf('Processing %s...\n',name);
            name = strcat(seg_dir,name);
            new_name = name;
+           rback = 0;
        end      
        
        img = imread(name);
@@ -71,7 +73,7 @@ else %segmentation refinement
             img = imresize(img,rfactor);
        end
        %do segmentation
-       img2 = seg_blockface_em(img,wp,0,0,1,[],[],init_obj);
+       img2 = seg_blockface_em(img,wp,1,10,rback,[],[],init_obj);
        imwrite(img2,new_name,'TIFF');
    end
 end

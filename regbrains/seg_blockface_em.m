@@ -62,7 +62,7 @@ end
 %features = rescale2(features,0,1);
 options = statset('Display','final');
 
-if exist('init_obj','var')
+if exist('init_obj','var') && ~isempty(init_obj)
     obj = gmdistribution.fit(features,2,'Options',options,'Start', init_obj);
 else
     obj = gmdistribution.fit(features,2,'Options',options);
