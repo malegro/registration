@@ -207,8 +207,8 @@ for f = 1:nFiles
         end
        
     else
-        final_image = strcat(histo_final_reg_dir,out_name);
-        result_mrr = strcat(histo_reg_dir,'mrr_',out_name);
+        final_image = strcat(histo_final_reg_dir,nii_name);
+        result_mrr = strcat(histo_reg_dir,'mrr_',nii_name);
         copyfile(result_mrr,final_image);
         
     end

@@ -3,7 +3,7 @@ function preprocess_intnorm_histo(direc,opt)
 %
 % Normalizes histology intensities
 % DIREC: case directory ( direc = '/autofs/space/hercules_001/users/malegro/Brains/Case01')
-% OPT: 1 - load JPG | 2 - load nifti
+% OPT: 1 - load segmented | 2 - load registered to blockface
 %
 
 if direc(end) ~= '/'
@@ -13,11 +13,12 @@ end
 if opt == 1
     ext = '*.jpg';
     dir_histo = strcat(direc,'histology/seg/');
-    dir_norm = strcat(direc,'histology/intnorm1/');
+    dir_norm = strcat(direc,'histology/intnormseg/');
 elseif opt == 2
-    ext = '*.mgz';    
-    dir_histo = strcat(direc,'histology/reg1/');
-    dir_norm = strcat(direc,'histology/intnorm2/');
+    ext = '*.tif';    
+    dir_histo = strcat(direc,'histology/regblock/');
+    dir_norm = strcat(direc,'histology/intnormreg/');
+    
 end
 % dir_tmp = strcat(direc,'tmp/');
 % r = dir(dir_tmp);
@@ -25,6 +26,7 @@ end
 %     rmdir(dir_tmp,'s');
 % end
 % mkdir(dir_tmp);
+mkdir(dir_norm);
 
 
 files = dir(strcat(dir_histo,ext));
@@ -67,10 +69,12 @@ for f=ref:-1:1
     new_img(mask == 0) = 0;    
     
     %save file
-    new_norm_name = changeExt(files(f).name,'mgz');
-    new_norm_name = strcat(dir_norm,new_norm_name); 
-    mgz.vol = new_img;
-    MRIwrite(mgz,new_norm_name);
+    %new_norm_name = changeExt(files(f).name,'mgz');
+    %new_norm_name = strcat(dir_norm,new_norm_name); 
+%     mgz.vol = new_img;
+%     MRIwrite(mgz,new_norm_name);
+    new_norm_name = strcat(dir_norm,files(f).name);
+    imwrite(new_img,new_norm_name,'TIFF');
     
     ref_img = new_norm_name;    
 end
@@ -107,10 +111,12 @@ for f=ref+1:nFiles
     new_img(mask == 0) = 0;    
     
     %save file
-    new_norm_name = changeExt(files(f).name,'mgz');
-    new_norm_name = strcat(dir_norm,new_norm_name); 
-    mgz.vol = new_img;
-    MRIwrite(mgz,new_norm_name);
+%     new_norm_name = changeExt(files(f).name,'mgz');
+%     new_norm_name = strcat(dir_norm,new_norm_name); 
+%     mgz.vol = new_img;
+%     MRIwrite(mgz,new_norm_name);
+    new_norm_name = strcat(dir_norm,files(f).name);
+    imwrite(new_img,new_norm_name,'TIFF');
     
     ref_img = new_norm_name;          
 end

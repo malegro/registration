@@ -1,19 +1,21 @@
-function build_blockface_volume(direc, vox_size)
+function build_histo_volume(dire,vox_size)
 
-if direc(end) ~= '/'
-    direc = [direc '/'];
-end
+%
+% Creates 3D histology volume from the registered histo plates
+% DIREC: case directory (e.g. /home/user/Case01)
+% VOXEL SIZE: voxel dimensions (e.g. [0.5 0.5 0.1])
+%
 
 if direc(end) ~= '/'
     direc = [direc '/'];
 end
 
 ext = '.tif';
-seg_dir = strcat(direc,'blockface/seg/');
-vol_dir = strcat(seg_dir,'volume/');
+%reg_dir = strcat(direc,'histology/regblock/');
+vol_dir = strcat(reg_dir,'volume/');
 mkdir(vol_dir);
 
-files = dir(strcat(seg_dir,'*',ext));
+files = dir(strcat(reg_dir,'*',ext));
 %files = sortfiles(files);
 nFiles = length(files);
 
@@ -21,14 +23,14 @@ volume = [];
 
 fprintf('Loading files...\n');
 for f=1:nFiles
-    name = strcat(seg_dir,files(f).name);
+    name = strcat(reg_dir,files(f).name);
     img = imread(name);
     volume = cat(3, volume, img);
 end
 
 fprintf('Writing MGZ...\n');
 mgz.vol = volume;
-mgz_name = strcat(vol_dir,'block_volume.mgz');
+mgz_name = strcat(vol_dir,'histo_volume.mgz');
 MRIwrite(mgz,mgz_name);
 
 %set voxel size
