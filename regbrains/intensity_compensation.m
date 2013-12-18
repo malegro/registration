@@ -20,7 +20,7 @@ function [new_img T] = intensity_compensation(img,ref_img)
 
 %sigma
 global o;
-o = 10;
+o = 5;
 
 new_img = zeros(size(img));
 
@@ -36,18 +36,19 @@ H2(1) = 0;
 %opt = optimset('Display','iter','PlotFcns',@optimplotfval);
 %opt = optimset('Display','iter');
 opt = optimset('Display','final');
-T = fminsearch(@(x)objf(x,H1,H2),[1.2 2.5],opt); 
+T = fminsearch(@(x)objf(x,H1,H2),[1.0 -2.0],opt); 
 %[T,Ot,nS] = powell(@(x)objf(x,H1,H2), [1.2 2.5],-1,[],[],[],[],[],300);
 
 
 %map intensities
 n = length(H1);
-%skip fist histogram position so to avoid processing background
+%skip fist histogram position (1) so to avoid processing background
 for xi=1:n-1 % image always [0 255]
     v = F(xi,T);
     new_img(img == xi) = v;
 end
-new_img = uint8(round(new_img));
+new_img = round(new_img);
+new_img = uint8(new_img);
 
 % close all;
 % subplot(1,3,1);

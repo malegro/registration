@@ -31,7 +31,7 @@ mkdir(dir_norm);
 
 files = dir(strcat(dir_histo,ext));
 nFiles = length(files);
-files = sortfiles(files);
+%files = sortfiles(files);
 
 %pick middle slice as histogram reference (middle brain images usually are pretty "stable")
  ref = round(nFiles/2);
@@ -144,14 +144,6 @@ end
 end
 
 
-%
-% ex: ext = 'jpg'
-%
-function new_name = changeExt(name,ext)
-    idx = strfind(name,'.');
-    idx = idx(end);    
-    new_name = strcat(name(1:idx),ext);
-end
 
 function flag = isNifti(name)
     idx = strfind(name,'.');
