@@ -1,4 +1,6 @@
-function parameter_search()
+function parameter_search(arquivos)
+
+nFiles = length(arquivos);
 
 
 
