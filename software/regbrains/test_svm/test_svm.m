@@ -1,8 +1,8 @@
 function test_svm
 
-mask_name = '040mask.tif';
-train_name = '040.jpg';
-test_name = '041.jpg';
+mask_name = '007mask.tif';
+train_name = '007.jpg';
+test_name = '007.jpg';
 
 mask = imread(mask_name);
 train_img = imread(train_name);
