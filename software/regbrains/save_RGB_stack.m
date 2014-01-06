@@ -10,6 +10,8 @@ B_vol = MRIread(B_file);
 
 [r c N] = size(R_vol.vol);
 
+N = 261;
+
 for S = 1:N
     R = round(R_vol.vol(:,:,S)); 
     G = round(G_vol.vol(:,:,S)); 
