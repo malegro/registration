@@ -1,4 +1,4 @@
-function nwsd = test_nwsd(dir1,dir2)
+function dices = test_dice_2d(dir1,dir2)
 
 if dir1(end) ~= '/'
     dir1 = [dir1 '/'];
@@ -18,7 +18,7 @@ if nFiles1 ~= nFiles2
     error('Different number of files found. Aborting!\n');
 end
 
-nwsd = zeros(1,nFiles1);
+dices = zeros(1,nFiles1);
 
 files1 = sortfiles(files1);
 files2 = sortfiles(files2);
@@ -27,7 +27,7 @@ fprintf('Running nWSD test...\n');
 
 %compute nWSD
 
-errors = nwsd;
+errors = dices;
 for f = 1:nFiles1
     
     fprintf('%d of %d\n', f, nFiles1);
@@ -39,8 +39,7 @@ for f = 1:nFiles1
     img2b = im2bw(img2);
     
     try
-        nwsd(f) = WESD(img1b, img2b, 'num', 100, 'norm_type', 2, 'element_spacing', [0.33 0.33]);
-        %fprintf('nSWD: %d \n', nwsd(f));
+        dices(f) = dice(img1b,img2b);
     catch
         fprintf('Error: %d \n', f);
         errors(f) = 1;
@@ -48,7 +47,7 @@ for f = 1:nFiles1
     
 end
 
-plot(nwsd,'b+');
+plot(dices,'b+');
 
 fprintf('\n Num. errors: %d', sum(errors));
 

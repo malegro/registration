@@ -1,4 +1,4 @@
-function nwsd = test_nwsd(dir1,dir2)
+function nwsd = test_nwsd_2d(dir1,dir2)
 
 if dir1(end) ~= '/'
     dir1 = [dir1 '/'];

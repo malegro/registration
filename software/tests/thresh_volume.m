@@ -22,7 +22,8 @@ for s=1:N
     
     fprintf('%d of %d\n', s,N);
     
-    img = gscale(volume(:,:,s));
+    img_mri = gscale(volume(:,:,s));
+    img = uint8(volume(:,:,s));
     
     mask = img;
     mask(mask < T) = 0;
@@ -32,7 +33,7 @@ for s=1:N
     filename = strcat(outdir,num2str(s),'.tif');
     filename2 = strcat(outdir,'gry',num2str(s),'.tif');
     imwrite(mask2,filename,'TIFF');
-    imwrite(img,filename2,'TIFF');
+    imwrite(img_mri,filename2,'TIFF');
     
 end
 

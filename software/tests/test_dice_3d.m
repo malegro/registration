@@ -1,4 +1,4 @@
-function nwsd = test_nwsd_3d(dir1,dir2)
+function dice3d = test_dice_3d(dir1,dir2)
 
 if dir1(end) ~= '/'
     dir1 = [dir1 '/'];
@@ -15,17 +15,17 @@ nFiles1 = length(files1);
 nFiles2 = length(files2);
 
 if nFiles1 ~= nFiles2
-    error('Different number of files found. Aborting!\n');
+    error('Different number of files found. Aborting!');
 end
 
-nwsd = zeros(1,nFiles1);
+dice3d = zeros(1,nFiles1);
 
 files1 = sortfiles(files1);
 files2 = sortfiles(files2);
 
 fprintf('Running nWSD test...\n');
 
-%compute nWSD
+%compute DICE
 
 vol1 = [];
 vol2 = [];
@@ -48,9 +48,10 @@ end
 
 fprintf('Computing errors...\n');
 % try
-        nwsd = WESD(vol1, vol2, 'num', 100, 'norm_type', 3, 'element_spacing', [0.33 0.33 0.4]);
+        %nwsd = WESD(vol1, vol2, 'num', 100, 'norm_type', 3, 'element_spacing', [0.33 0.33 0.4]);
         %nwsd = WESD(vol1, vol2, 'num', 50, 'norm_type', 3, 'element_spacing', [0.33 0.33 0.4]);
         %nwsd = WESD(vol1, vol2);
+dice3d = dice(vol1,vol2);
         
         %fprintf('nSWD: %d \n', nwsd(f));
 % catch
