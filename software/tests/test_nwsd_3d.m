@@ -48,7 +48,7 @@ end
 
 fprintf('Computing errors...\n');
 % try
-        nwsd = WESD(vol1, vol2, 'num', 100, 'norm_type', 3, 'element_spacing', [0.33 0.33 0.4]);
+        nwsd = WESD(vol1, vol2, 'num', 100, 'norm_type', 3, 'element_spacing', [0.33 0.33 0.33]);
         %nwsd = WESD(vol1, vol2, 'num', 50, 'norm_type', 3, 'element_spacing', [0.33 0.33 0.4]);
         %nwsd = WESD(vol1, vol2);
         
