@@ -1,4 +1,11 @@
-function [init_obj] = init_gmm(wsize,wp, samples)
+function [init_obj] = init_gmm(wsize,wp,samples,rfactor)
+
+%
+% SAMPLES: samples(i).name = '/home/to/file.ext';
+%          samples(i).fore = [x1,y1; x2,y2; x3,y3]; 
+%          samples(i).back = [x1,y1; x2,y2; x3,y3]; 
+%
+%
 
     nFiles = length(samples);
     
@@ -8,7 +15,12 @@ function [init_obj] = init_gmm(wsize,wp, samples)
     for s=1:nFiles    
         file = samples(s).name; 
         img = imread(file);
-        %img = imresize(img,rfactor);
+        
+        if ~isempty(rfactor)
+            img = imresize(img,rfactor);
+        end
+        
+        
         img = weak_wb(img,wp);
         yiq = rgb2ntsc(img);       
         I = yiq(:,:,2);

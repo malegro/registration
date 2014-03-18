@@ -1,12 +1,21 @@
-function preprocess_seg_block(directory,wp,todo,do1st,samples)
+function preprocess_seg_block(directory,wp,todo,do1st,samples,inext)
 
 %
 % Segments blockface image background
 % DIRECTORY : case dir
+% WP: coordinates for white color point example, used in white balance
+% TODO: list of file for segmentation refinement. Used when much background
+% was left behind.
+% DO1ST:
+% SAMPLE: structure with samples for GMM initialization. Improvest
+% segmentation results.
+% INEXT: extention of input images, Ie.: 'jpg'
 %
 
 wsize = 13;
 rfactor = 0.15;
+
+
 
 if directory(end) ~= '/'
     directory = [directory '/'];
@@ -14,16 +23,21 @@ end
 
 init_obj = [];
 if ~isempty(samples)
-    init_obj = init_gmm(wsize,wp,samples);
+    
+    if ~isempty(todo) %this is not the first segmentation so, images are already rescaled
+        rfactor = [];
+    end
+    
+    init_obj = init_gmm(wsize,wp,samples, rfactor);
 end
 
 block_dir = strcat(directory,'blockface/orig/'); %original images
 seg_dir = strcat(directory,'blockface/seg/');
 mkdir(seg_dir);
 
-if isempty(todo) %first segmentation
+if isempty(todo) %first segmentation (aka main background parts)
 
-    files = dir(strcat(block_dir,'*.jpg'));
+    files = dir(strcat(block_dir,'*.',inext));
     nFiles = length(files);
     for f=1:nFiles    
 
@@ -34,7 +48,7 @@ if isempty(todo) %first segmentation
         img = imresize(img,rfactor);
 
         %do segmentation
-        img2 = seg_blockface_em(img,wp,1,120,1,[],[],init_obj);
+        img2 = seg_blockface_em(img,wp,1,10,1,[],[],init_obj);
         new_name = changeExt(files(f).name,'tif'); %avoid lossy compression
 
         new_name = strcat(seg_dir,new_name);
@@ -54,7 +68,7 @@ else %segmentation refinement
        end
        
        if do1st 
-           name = strcat(prefix,int2str(todo(f)),'.jpg');
+           name = strcat(prefix,int2str(todo(f)),'.',inext);
            fprintf('Processing %s...\n',name);
            new_name = changeExt(name,'tif'); %avoid lossy compression
            name = strcat(block_dir,name);           

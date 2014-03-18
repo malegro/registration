@@ -26,8 +26,11 @@ for i=1:nFiles
     saida = strcat(dir_root,'texture_',name,'_',int2str(window),'pts.mat');
     
     img = imread(img_name);
-    mask = imread(mask_name);
-    mask = mask(:,:,1);
+%     mask = imread(mask_name);
+%     mask = mask(:,:,1);
+
+    [r c N] = size(img);
+    mask = ones(r,c);
     
     
     fprintf('Processing file: %s (%d of %d)\n', img_name,i,nFiles);
@@ -41,11 +44,13 @@ for i=1:nFiles
     
     %monta estrutura com dados
     estrut.name = cellstr(img_name);
-    estrut.dados = dados;
+    estrut.data = dados;
     
     disp('Saving data file...');
     %salva estrutura
     save(char(saida),'estrut'); 
+    clear 'estrut';
+    clear 'dados';
 end
 
 
