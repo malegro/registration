@@ -16,26 +16,19 @@ location = [];
 
 tmp = [];
 
-nerrors = 0;
-
 for i = 1:r
     arq = arquivos(i);
-    if ~strcmp(arq.name,'.') && ~strcmp(arq.name,'..')   
+    if ~strcmp(arq.name,'.') && ~strcmp(arq.name,'..')      
+        nome = strcat(diretorio,'/',arq.name);
+        info = dicominfo(nome);
         
-        try
-            nome = strcat(diretorio,'/',arq.name);
-            info = dicominfo(nome);
-
-            dados.nome = nome;
-            dados.location = info.SliceLocation;
-
-            if isempty(tmp)
-                tmp = dados;            
-            else
-                tmp = [tmp; dados];
-            end
-        catch
-            nerrors = nerrors + 1;
+        dados.nome = nome;
+        dados.location = info.SliceLocation;
+        
+        if isempty(tmp)
+            tmp = dados;            
+        else
+            tmp = [tmp; dados];
         end
     end
 end
@@ -66,7 +59,5 @@ for i=1:N
         location = cat(1,location,loc);
     end
 end
-
-fprintf('There were %d unread files (possibly not DICOM files).\n',nerrors);
     
 volume = double(volume);

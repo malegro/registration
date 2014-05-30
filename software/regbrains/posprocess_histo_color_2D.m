@@ -11,6 +11,8 @@ if casedir(end) ~= '/'
 end    
 
 histo_dir = strcat(casedir,'histology/');
+bf_dir = strcat(casedir,'blockface/');
+bf_seg_dir = str(bf_dir,'seg/');
 histo_orig_dir = strcat(histo_dir,'orig/');
 histo_seg_dir = strcat(histo_dir,'seg/');
 transf2d_dir = strcat(histo_dir,'reg1/');
@@ -31,7 +33,15 @@ nFiles = length(files);
 for f = 1:nFiles %seg file name (.tif)
     orig_file = strcat(histo_orig_dir,changeExt(files(f).name,'jpg'));
     seg_file = strcat(histo_seg_dir,files(f).name);
-    transf2d_file = strcat(transf2d_dir,files(f).name,'.lta');
+    name = files(f).name;
+    
+    %deformation field files
+    mrr2d_file = strcat(transf2d_dir,files(f).name,'.lta');
+    idx = strfind(name,'.tif');
+    ants_prefix = strcat('ants_',name(1:idx-1)); 
+
+    %tranf log file
+    log_file = strcat(transf2d_dir,'.log');
     
     R_file = strcat(tmp_color_dir,'R_',files(f).name);
     G_file = strcat(tmp_color_dir,'G_',files(f).name);
@@ -55,19 +65,57 @@ for f = 1:nFiles %seg file name (.tif)
     imwrite(G,G_file,'TIFF');
     imwrite(B,B_file,'TIFF');
     
-    %apply transform to RGB channels    
-    R_file_t = strcat(tmp_color_dir,'R_t_',changeExt(files(f).name,'mgz'));
-    G_file_t = strcat(tmp_color_dir,'G_t_',changeExt(files(f).name,'mgz'));
-    B_file_t = strcat(tmp_color_dir,'B_t_',changeExt(files(f).name,'mgz'));     
-    command1 = sprintf('mri_convert -at %s -rt cubic %s %s',transf2d_file, R_file, R_file_t);
-    command2 = sprintf('mri_convert -at %s -rt cubic %s %s',transf2d_file, G_file, G_file_t);
-    command3 = sprintf('mri_convert -at %s -rt cubic %s %s',transf2d_file, B_file, B_file_t);
-    [status1, result] = system(command1);
-    [status2, result] = system(command2);
-    [status3, result] = system(command3);
+    %RGB registered filenames
+    R_file_t = strcat(tmp_color_dir,'R_t_',changeExt(files(f).name,'nii.gz'));
+    G_file_t = strcat(tmp_color_dir,'G_t_',changeExt(files(f).name,'nii.gz'));
+    B_file_t = strcat(tmp_color_dir,'B_t_',changeExt(files(f).name,'nii.gz')); 
     
-    if status1 ~= 0 || status2 ~= 0 || status3 ~= 0
-        fprintf('### Error appling 2D transform to file %s.\n ###',files(f).name);        
+    %apply transforms to RGB channels    
+    log_transf = textread(log_file); %read log to find out which registrations were performed
+    if log_transf(1) == '1' %apply MRI robust register transform
+    
+        command1 = sprintf('mri_convert -at %s -rt cubic %s %s',mrr2d_file, R_file, R_file_t);
+        command2 = sprintf('mri_convert -at %s -rt cubic %s %s',mrr2d_file, G_file, G_file_t);
+        command3 = sprintf('mri_convert -at %s -rt cubic %s %s',mrr2d_file, B_file, B_file_t);
+        [status1, result] = system(command1);
+        [status2, result] = system(command2);
+        [status3, result] = system(command3);
+
+        if status1 ~= 0 || status2 ~= 0 || status3 ~= 0
+            fprintf('### Error appling 2D MRR transform to file %s.\n ###',files(f).name);  
+            continue;
+        end
+    
+    end
+    
+    if log_transf(2) == '1' % has ANTs transform so, apply it
+        
+        R_file_t2 = strcat(tmp_color_dir,'ants_R_t_',changeExt(files(f).name,'nii.gz'));
+        G_file_t2 = strcat(tmp_color_dir,'ants_G_t_',changeExt(files(f).name,'nii.gz'));
+        B_file_t2 = strcat(tmp_color_dir,'ants_B_t_',changeExt(files(f).name,'nii.gz')); 
+        
+        bf_img = strcat(bf_seg_dir,name); %because ANTs requires the reference image in order to apply the deformation
+        
+        command1 = sprintf('antsApplyTransforms -d 2 -i %s -r %s -n linear -t %s1Warp.nii.gz -t %s0GenericAffine.mat -o %s',...
+            R_file_t,bf_img,ants_prefix,ants_prefix,R_file_t2);
+        command2 = sprintf('antsApplyTransforms -d 2 -i %s -r %s -n linear -t %s1Warp.nii.gz -t %s0GenericAffine.mat -o %s',...
+            G_file_t,bf_img,ants_prefix,ants_prefix,G_file_t2);
+        command3 = sprintf('antsApplyTransforms -d 2 -i %s -r %s -n linear -t %s1Warp.nii.gz -t %s0GenericAffine.mat -o %s',...
+            B_file_t,bf_img,ants_prefix,ants_prefix,B_file_t2);
+        
+        [status1, result] = system(command1);
+        [status2, result] = system(command2);
+        [status3, result] = system(command3);
+
+        if status1 ~= 0 || status2 ~= 0 || status3 ~= 0
+            fprintf('### Error appling 2D ANTs transform to file %s.\n ###',files(f).name);    
+            continue;
+        end
+        
+        R_file_t = R_file_t2;
+        G_file_t = G_file_t2;
+        B_file_t = B_file_t2;
+        
     end
     
     %create color image

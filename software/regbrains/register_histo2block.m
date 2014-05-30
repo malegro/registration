@@ -192,6 +192,10 @@ for f = 1:nFiles
         img_ants = imread(result_ants);
         img_ref = imread(ref_img);
         
+        %logs what kind of registration method was used
+        log_file = strcat(histo_reg_dir,name,'.log'); 
+        logfid = fopen(log_file,'w+');
+        
         %compare cross correlation
         score1 = xcorr_coeff(img_ref,img_mrr);
         score2 = xcorr_coeff(img_ref,img_ants);
@@ -201,10 +205,16 @@ for f = 1:nFiles
         if score2 < score1 %don't use ANTS result as final image
            fprintf('Using MRR result.\n'); 
            imwrite(img_mrr,final_image,'TIFF');
+           %write log
+           fprintf(logfid,'10'); %uses MRR but doesn't use ANTS
         else
            fprintf('Using ANTs result.\n'); 
            imwrite(img_ants,final_image,'TIFF');
+           %write log
+           fprintf(logfid,'11'); %uses MRR and uses ANTS
         end
+        
+        fclose(logfid);
        
     else
         final_image = strcat(histo_final_reg_dir,nii_name);
