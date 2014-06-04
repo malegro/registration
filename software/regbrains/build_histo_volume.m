@@ -2,7 +2,7 @@ function build_histo_volume(reg_dir,vox_size)
 
 %
 % Creates 3D histology volume from the registered histo plates
-% REG_DIR: directory where images are located
+% REG_DIR: directory where the target images are located
 % VOXEL SIZE: voxel dimensions (e.g. [0.5 0.5 0.1])
 %
 
@@ -11,7 +11,7 @@ if reg_dir(end) ~= '/'
 end
 
 ext = '.tif';
-%reg_dir = strcat(direc,'histology/regblock/');
+%reg_dir = strcat(reg_dir,'histology/regblock/');
 vol_dir = strcat(reg_dir,'volume/');
 mkdir(vol_dir);
 
