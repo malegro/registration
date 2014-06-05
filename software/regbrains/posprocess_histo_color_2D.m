@@ -3,7 +3,7 @@ function posprocess_histo_color_2D(casedir)
 %
 % Applies 2D registration transforms to create color image slices.
 %
-% CASEDIR :  ie /storage/Hisstology/Case01
+% CASEDIR :  ie /storage/Histology/Case01
 %
 
 if casedir(end) ~= '/'
@@ -12,7 +12,7 @@ end
 
 histo_dir = strcat(casedir,'histology/');
 bf_dir = strcat(casedir,'blockface/');
-bf_seg_dir = str(bf_dir,'seg/');
+bf_seg_dir = strcat(bf_dir,'seg/');
 histo_orig_dir = strcat(histo_dir,'orig/');
 histo_seg_dir = strcat(histo_dir,'seg/');
 transf2d_dir = strcat(histo_dir,'reg1/');

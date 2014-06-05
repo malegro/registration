@@ -1,4 +1,4 @@
-function preprocess_set_colorsize(root_dir)
+function rate = preprocess_set_colorsize(root_dir)
 
 %
 % Convert slices to grayscale and resize histology to blockface
