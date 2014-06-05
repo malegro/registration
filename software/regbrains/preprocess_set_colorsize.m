@@ -6,6 +6,10 @@ function rate = preprocess_set_colorsize(root_dir)
 %
 % ROOT_DIR : Case base dir (i.e. /Home/User/Case01)
 %
+% RATE : resize rate used for scaling histology and blockface image to a
+% similar size (save this value for it' necessary in
+% posprocess_histo_color_2D(...))
+%
 
 if root_dir(end) ~= '/'
     root_dir = [root_dir '/'];

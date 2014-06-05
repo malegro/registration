@@ -1,9 +1,10 @@
-function posprocess_histo_color_2D(casedir)
+function posprocess_histo_color_2D(casedir, rratio)
 
 %
 % Applies 2D registration transforms to create color image slices.
 %
 % CASEDIR :  ie /storage/Histology/Case01
+% RRATIO:  resize ratio (returned by preprocess_set_colorsize(...))
 %
 
 if casedir(end) ~= '/'
@@ -29,6 +30,7 @@ mkdir(tmp_color_dir);
 
 files = dir(strcat(histo_seg_dir,'*.tif'));
 nFiles = length(files);
+log_transf = [];
 
 for f = 1:nFiles %seg file name (.tif)
     orig_file = strcat(histo_orig_dir,changeExt(files(f).name,'jpg'));
@@ -38,23 +40,23 @@ for f = 1:nFiles %seg file name (.tif)
     %deformation field files
     mrr2d_file = strcat(transf2d_dir,files(f).name,'.lta');
     idx = strfind(name,'.tif');
-    ants_prefix = strcat('ants_',name(1:idx-1)); 
+    ants_prefix = strcat(transf2d_dir,'ants_',name(1:idx-1)); 
 
     %tranf log file
-    log_file = strcat(transf2d_dir,'.log');
+    log_file = strcat(transf2d_dir,files(f).name,'.log');
     
     R_file = strcat(tmp_color_dir,'R_',files(f).name);
     G_file = strcat(tmp_color_dir,'G_',files(f).name);
     B_file = strcat(tmp_color_dir,'B_',files(f).name);    
     
     img = imread(orig_file);    
-    mask = imread(seg_file); %uses segmented file as mask
+    mask = imread(seg_file); %uses segmented histology image as mask
     
     %resize color channels to match mask
     %mask to remove backgroung
     img2 = imresize(img,0.15);
-    img2 = imresize(img2,0.7630);
-    img3 = img2;
+    img3 = imresize(img2,rratio);
+    %img3 = img2;
     R = img3(:,:,1);
     G = img3(:,:,2);
     B = img3(:,:,3);
@@ -72,7 +74,11 @@ for f = 1:nFiles %seg file name (.tif)
     
     %apply transforms to RGB channels    
     log_transf = textread(log_file); %read log to find out which registrations were performed
-    if log_transf(1) == '1' %apply MRI robust register transform
+    if isempty(log_transf) || log_transf == 0
+        log_transf = 10;
+    end
+    
+    if log_transf == 10 || log_transf == 11 %apply MRI robust register transform
     
         command1 = sprintf('mri_convert -at %s -rt cubic %s %s',mrr2d_file, R_file, R_file_t);
         command2 = sprintf('mri_convert -at %s -rt cubic %s %s',mrr2d_file, G_file, G_file_t);
@@ -88,7 +94,7 @@ for f = 1:nFiles %seg file name (.tif)
     
     end
     
-    if log_transf(2) == '1' % has ANTs transform so, apply it
+    if log_transf == 01 || log_transf == 11% has ANTs transform so, apply it
         
         R_file_t2 = strcat(tmp_color_dir,'ants_R_t_',changeExt(files(f).name,'nii.gz'));
         G_file_t2 = strcat(tmp_color_dir,'ants_G_t_',changeExt(files(f).name,'nii.gz'));
