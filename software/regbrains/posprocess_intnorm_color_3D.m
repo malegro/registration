@@ -31,23 +31,23 @@ B_prefix = 'B_t_';
 files = dir(strcat(color2d_dir,'*.',ext));
 nFiles = length(files);
 
-for f=1:nFiles
-    
-    rgb_file = strcat(color2d_dir,files(f).name);
-    R_file = strcat(color2d_dir,R_prefix,files(f).name);
-    G_file = strcat(color2d_dir,G_prefix,files(f).name);
-    B_file = strcat(color2d_dir,B_prefix,files(f).name);
-    
-    rgb_img = imread(rgb_file);
-    R_channel = rgb_img(:,:,1);
-    G_channel = rgb_img(:,:,2);
-    B_channel = rgb_img(:,:,3);
-    
-    imwrite(R_channel,R_file,'TIFF');
-    imwrite(G_channel,G_file,'TIFF');
-    imwrite(B_channel,B_file,'TIFF');
-    
-end
+% for f=1:nFiles
+%     
+%     rgb_file = strcat(color2d_dir,files(f).name);
+%     R_file = strcat(color2d_dir,R_prefix,files(f).name);
+%     G_file = strcat(color2d_dir,G_prefix,files(f).name);
+%     B_file = strcat(color2d_dir,B_prefix,files(f).name);
+%     
+%     rgb_img = imread(rgb_file);
+%     R_channel = rgb_img(:,:,1);
+%     G_channel = rgb_img(:,:,2);
+%     B_channel = rgb_img(:,:,3);
+%     
+%     imwrite(R_channel,R_file,'TIFF');
+%     imwrite(G_channel,G_file,'TIFF');
+%     imwrite(B_channel,B_file,'TIFF');
+%     
+% end
 
 
 %
@@ -69,38 +69,38 @@ nFiles = length(red_files); %arrays must be of the same length
  G_ref_file = strcat(color2d_dir,green_files(ref).name); 
  B_ref_file = strcat(color2d_dir,blue_files(ref).name); 
 
-for f=ref:-1:1    
-    
-    fprintf('Processing %s.\n',red_files(f).name);
-
-    %Apply transform to red channel                   
-    fix_file = strcat(color2d_dir,red_files(f).name);
-    new_img_file = strcat(color2d_dir,'intcorr_',red_files(f).name);         
-    do_intcorr(fix_file,R_ref_file,new_img_file);
-    R_ref_file = new_img_file;
-    
-    fprintf('Processing %s.\n',green_files(f).name);
-
-    %Apply transform to green channel              
-    fix_file = strcat(color2d_dir,green_files(f).name);
-    new_img_file = strcat(color2d_dir,'intcorr_',green_files(f).name);         
-    do_intcorr(fix_file,G_ref_file,new_img_file);
-    G_ref_file = new_img_file;
-    
-    fprintf('Processing %s.\n',blue_files(f).name);
-        
-    %Apply transform to blue channel              
-    fix_file = strcat(color2d_dir,blue_files(f).name);
-    new_img_file = strcat(color2d_dir,'intcorr_',blue_files(f).name);         
-    do_intcorr(fix_file,B_ref_file,new_img_file);   
-    B_ref_file = new_img_file;  
- 
-end
+% for f=ref:-1:1    
+%     
+%     fprintf('Processing %s.\n',red_files(f).name);
+% 
+%     %Apply transform to red channel                   
+%     fix_file = strcat(color2d_dir,red_files(f).name);
+%     new_img_file = strcat(color2d_dir,'intcorr_',red_files(f).name);         
+%     do_intcorr(fix_file,R_ref_file,new_img_file);
+%     R_ref_file = new_img_file;
+%     
+%     fprintf('Processing %s.\n',green_files(f).name);
+% 
+%     %Apply transform to green channel              
+%     fix_file = strcat(color2d_dir,green_files(f).name);
+%     new_img_file = strcat(color2d_dir,'intcorr_',green_files(f).name);         
+%     do_intcorr(fix_file,G_ref_file,new_img_file);
+%     G_ref_file = new_img_file;
+%     
+%     fprintf('Processing %s.\n',blue_files(f).name);
+%         
+%     %Apply transform to blue channel              
+%     fix_file = strcat(color2d_dir,blue_files(f).name);
+%     new_img_file = strcat(color2d_dir,'intcorr_',blue_files(f).name);         
+%     do_intcorr(fix_file,B_ref_file,new_img_file);   
+%     B_ref_file = new_img_file;  
+%  
+% end
 
 %iterates 2nd part of the volumes     
-R_ref_file = strcat(tmp_color_dir,red_files(ref).name);  
-G_ref_file = strcat(tmp_color_dir,green_files(ref).name); 
-B_ref_file = strcat(tmp_color_dir,blue_files(ref).name); 
+R_ref_file = strcat(color2d_dir,red_files(ref).name);  
+G_ref_file = strcat(color2d_dir,green_files(ref).name); 
+B_ref_file = strcat(color2d_dir,blue_files(ref).name); 
 for f=ref+1:nFiles   
     
     fprintf('Processing %s.\n',red_files(f).name);
