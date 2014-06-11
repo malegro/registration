@@ -1,10 +1,11 @@
-function posprocess_histo_color_3D(casedir)
+function posprocess_histo_color_3D(casedir,ref_mri)
 
 % 
 % Applies the 3D registration transform to the R G B channels in order to create a color
 % volume.
 %
 % CASEDIR : root dir for the case. I.e. /storage/Brains/Case01
+% REF_MRI: reference MRI volume name
 %
 
 
@@ -36,11 +37,11 @@ B_prefix = 'intcorr_B_t_';
 %
 
 red_files = dir(strcat(color2d_dir,R_prefix,'*.',ext));
-red_files = sorfiles(red_files);
+red_files = sortfiles(red_files);
 green_files = dir(strcat(color2d_dir,G_prefix,'*.',ext));
-green_files = sorfiles(green_files);
+green_files = sortfiles(green_files);
 blue_files = dir(strcat(color2d_dir,B_prefix,'*.',ext));
-blue_files = sorfiles(blue_files);
+blue_files = sortfiles(blue_files);
 
 nFiles = length(red_files);
 
@@ -49,7 +50,7 @@ green_vol = [];
 blue_vol = [];
 
 %load reference volume in order to retrieve the vox2ras0 matrix
-histo2mri_file = strcat(histo2mri_dir,'histo_volume_manual_reg2.mgz');
+histo2mri_file = strcat(histo2mri_dir,ref_mri);
 histo2mri = MRIread(histo2mri_file);
 vox2ras0 = histo2mri.vox2ras0; 
 
@@ -81,7 +82,7 @@ mgz.vox2ras0 = vox2ras0;
 MRIwrite(mgz,G_vol_file);
 
 %to save memory
-clear red_vol;
+clear green_vol;
 clear mgz;
 
 for f=1:nFiles
@@ -96,12 +97,12 @@ mgz.vox2ras0 = vox2ras0;
 MRIwrite(mgz,B_vol_file);
 
 %to save memory
-clear red_vol;
+clear blue_vol;
 clear mgz;
 
 
 %
-% Applies 3D transforms 
+% TODO: Applies 3D transforms 
 %
 
 
