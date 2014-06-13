@@ -10,7 +10,7 @@ B_vol = MRIread(B_file);
 
 [r c N] = size(R_vol.vol);
 
-N = 261;
+%N = 261;
 
 for S = 1:N
     R = round(R_vol.vol(:,:,S)); 
@@ -18,7 +18,7 @@ for S = 1:N
     B = round(B_vol.vol(:,:,S));
     color = cat(3,R,G,B);
     
-    rgb_name = strcat(dest_dir,'histo_',int2str(S),'.tif');
+    rgb_name = strcat(dest_dir,'histo_RGB_',int2str(S),'.tif');
     
     imwrite(uint8(color),rgb_name,'TIFF');    
 end
